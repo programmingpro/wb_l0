@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма заказов</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .form-container {
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            width: 700px;
+            margin: auto;
+            margin-top: 50px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result-container {
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+    </style>
+    <title>Форма заказов</title>
+    <script>
+        async function fetchData(url) {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        async function showAllOrders() {
+            const resultContainer = document.getElementById('result-container');
+            const data = await fetchData('/get_all');
+            resultContainer.innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function showOrderById() {
+            const orderId = document.getElementById('order-id').value
+
+            const resultContainer = document.getElementById('result-container');
+            const data = await fetchData(`/get_order/${orderId}`);
+
+            if (data) {
+                resultContainer.innerText = JSON.stringify(data, null, 2);
+            } else {
+                resultContainer.innerText = 'Заказ с указанным ID не найден.';
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="form-container">
+    <h2 class="text-center mb-4">Форма заказов</h2>
+    <form>
+        <div class="form-group">
+            <label for="order-id">Введите ID заказа:</label>
+            <input type="text" class="form-control" id="order-id" placeholder="ID заказа">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="showOrderById()">Показать заказ по ID</button>
+        <button type="button" class="btn btn-success mt-2" onclick="showAllOrders()">Показать все заказы</button>
+    </form>
+    <div id="result-container" class="mt-4"></div>
+</div>
+</body>
+</html>
